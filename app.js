@@ -25,6 +25,10 @@ app.get("/", (req, res) => {
 app.use("/wiki", require("./routes/wiki"));
 app.use("/users", require("./routes/users"));
 
+app.get("*", (req, res) => {
+  res.send("404 - Page not found");
+});
+
 // test if the connection is working
 db.authenticate().then(() => {
   console.log("connected to the database");
