@@ -5,7 +5,7 @@ module.exports = () =>
   layout(html`
     <h3>Add a Page</h3>
     <hr />
-    <form method="POST" action="/wiki/">
+    <form method="POST" action="/wiki">
       <div class="form-group">
         <label for="name" class="col-sm-2 control-label">Author</label>
         <div class="col-sm-10">
@@ -66,6 +66,19 @@ module.exports = () =>
             name="status"
             type="text"
             placeholder="Open or Closed"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">Tags</label>
+        <div class="col-sm-10">
+          <input
+            id="tags"
+            name="tags"
+            type="text"
+            placeholder="tags"
             class="form-control"
           />
         </div>

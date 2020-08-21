@@ -26,11 +26,21 @@ wikiRouter.post("/", async (req, res, next) => {
       title: req.body.title,
       content: req.body.content,
       status: req.body.status,
+      tags: req.body.tags,
     });
 
     await page.setAuthor(user.id);
 
     res.redirect(`/wiki/${page.slug}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
+wikiRouter.get("/search", async (req, res, next) => {
+  try {
+    const pages = await Page.findByTag(req.query.search.split(" "));
+    res.send(main(pages));
   } catch (err) {
     next(err);
   }
@@ -43,8 +53,27 @@ wikiRouter.get("/add", (req, res, next) => {
 wikiRouter.get("/:slug", async (req, res, next) => {
   try {
     const page = await Page.findOne({ where: { slug: req.params.slug } });
-    const author = await page.getAuthor();
-    res.send(wikiPage(page, author.name));
+
+    if (page) {
+      res.send(wikiPage(page, await page.getAuthor()));
+    } else {
+      res.send(`this article with slug "${req.params.slug}" does not exist`);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+wikiRouter.get("/:slug/similar", async (req, res, next) => {
+  try {
+    const page = await Page.findOne({ where: { slug: req.params.slug } });
+
+    if (page) {
+      const similar = await page.findSimilar();
+      res.send(main(similar));
+    } else {
+      res.send(`this article with slug "${req.params.slug}" does not exist`);
+    }
   } catch (err) {
     next(err);
   }

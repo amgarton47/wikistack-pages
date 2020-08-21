@@ -7,11 +7,14 @@ module.exports = (page, author) =>
       ${page.title}
       <small> (<a href="/wiki/${page.slug}/similar">Similar</a>)</small>
     </h3>
+    <ul>
+      ${page.tags.map((tag) => {
+        return `<li><a href="/wiki/search?search=${tag}">${tag}<a/></li>`;
+      })}
+    </ul>
     <h4>
       by
-      <a href="PLACEHOLDER-AUTHOR-URL"
-        >${console.log(author, "AUTHOR")} ${author}</a
-      >
+      <a href="/users/${author.id}">${author.name}</a>
     </h4>
     <hr />
     <div class="page-body">${page.content}</div>

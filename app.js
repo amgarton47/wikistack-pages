@@ -4,7 +4,7 @@ const PORT = "3000";
 
 const { db, Page, User } = require("./models");
 
-const { main } = require("./views");
+const { notFound, errorPage } = require("./views");
 
 // logging middleware
 const morgan = require("morgan");
@@ -16,17 +16,22 @@ app.use(express.static("public"));
 // url body parsing middleware
 app.use(express.urlencoded({ extended: false }));
 
-// main route
 app.get("/", (req, res) => {
-  //   res.send(main(""));
   res.redirect("/wiki");
 });
 
 app.use("/wiki", require("./routes/wiki"));
 app.use("/users", require("./routes/users"));
 
-app.get("*", (req, res) => {
-  res.send("404 - Page not found");
+// catches 404 not found errors
+app.use((req, res) => {
+  res.status(404).send(notFound());
+});
+
+// catches internal server errors
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send(errorPage());
 });
 
 // test if the connection is working
@@ -35,7 +40,7 @@ db.authenticate().then(() => {
 });
 
 const startApp = async () => {
-  await db.sync();
+  await db.sync(/*{ force: true }*/);
 
   app.listen(PORT, () => {
     console.log(`Wikistack app is up and running on port ${PORT}`);
